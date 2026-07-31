@@ -1,0 +1,9 @@
+motor
+fastapi 
+uvicorn
+pydantic
+cloudinary
+python-multipart
+python-dotenv
+
+# uvicorn main:app --reload
