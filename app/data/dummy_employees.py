@@ -11,7 +11,7 @@ DUMMY_EMPLOYEES = [
             "salary_type": "Monthly", "base_salary": 25000, "hourly_rate": None, "currency": "PKR",
             "pay_period_start_date": "2026-06-01", "payment_method": "Bank Transfer",
             "overtime_hourly_rate": 200, "late_deduction_rate": 100,
-            "benefits": [{"name": "Pick and Drop Service", "amount": 1000}, {"name": "Expenses", "amount": 500}],
+            "benefits": [{"name": "Pick and Drop Service","calculation_type": "fixed", "value": 1000}, {"name": "Expenses","calculation_type": "fixed", "value": 500}],
             "deductions": [{"type": "UIF", "calculation_type": "percentage", "value": 5}, {"type": "Income Tax", "calculation_type": "fixed", "value": 1500}]
         }
     },
@@ -26,7 +26,7 @@ DUMMY_EMPLOYEES = [
             "salary_type": "Monthly", "base_salary": 45000, "hourly_rate": None, "currency": "PKR",
             "pay_period_start_date": "2026-06-01", "payment_method": "Bank Transfer",
             "overtime_hourly_rate": 300, "late_deduction_rate": 150,
-            "benefits": [{"name": "Pick and Drop Service", "amount": 0}, {"name": "Expenses", "amount": 800}],
+            "benefits": [{"name": "Pick and Drop Service","calculation_type": "fixed", "value": 0}, {"name": "Expenses","calculation_type": "fixed", "value": 800}],
             "deductions": [{"type": "UIF", "calculation_type": "percentage", "value": 5}, {"type": "Income Tax", "calculation_type": "percentage", "value": 8}]
         }
     },
@@ -42,7 +42,7 @@ DUMMY_EMPLOYEES = [
             "salary_type": "Monthly", "base_salary": 12000, "hourly_rate": None, "currency": "PKR",
             "pay_period_start_date": "2026-06-01", "payment_method": "Bank Transfer",
             "overtime_hourly_rate": 150, "late_deduction_rate": 80,
-            "benefits": [{"name": "Pick and Drop Service", "amount": 0}, {"name": "Expenses", "amount": 0}],
+            "benefits": [{"name": "Pick and Drop Service","calculation_type": "fixed", "value": 0}, {"name": "Expenses","calculation_type": "fixed", "value": 0}],
             "deductions": [{"type": "UIF", "calculation_type": "percentage", "value": 5}, {"type": "Income Tax", "calculation_type": "fixed", "value": 400}]
         }
     },
@@ -58,7 +58,7 @@ DUMMY_EMPLOYEES = [
             "salary_type": "Monthly", "base_salary": 10000, "hourly_rate": None, "currency": "PKR",
             "pay_period_start_date": "2026-06-01", "payment_method": "Cash",
             "overtime_hourly_rate": 120, "late_deduction_rate": 70,
-            "benefits": [{"name": "Pick and Drop Service", "amount": 500}, {"name": "Expenses", "amount": 0}],
+            "benefits": [{"name": "Pick and Drop Service","calculation_type": "fixed", "value": 500}, {"name": "Expenses","calculation_type": "fixed", "value": 0}],
             "deductions": [{"type": "UIF", "calculation_type": "percentage", "value": 5}, {"type": "Income Tax", "calculation_type": "fixed", "value": 300}]
         }
     },
@@ -74,7 +74,7 @@ DUMMY_EMPLOYEES = [
             "salary_type": "Monthly", "base_salary": 40000, "hourly_rate": None, "currency": "PKR",
             "pay_period_start_date": "2026-06-01", "payment_method": "Bank Transfer",
             "overtime_hourly_rate": 250, "late_deduction_rate": 120,
-            "benefits": [{"name": "Pick and Drop Service", "amount": 1000}, {"name": "Expenses", "amount": 300}],
+            "benefits": [{"name": "Pick and Drop Service","calculation_type": "fixed", "value": 1000}, {"name": "Expenses","calculation_type": "fixed", "value": 300}],
             "deductions": [{"type": "UIF", "calculation_type": "percentage", "value": 5}, {"type": "Income Tax", "calculation_type": "percentage", "value": 7}]
         }
     },
@@ -89,7 +89,7 @@ DUMMY_EMPLOYEES = [
             "salary_type": "Hourly", "base_salary": None, "hourly_rate": 250, "currency": "PKR",
             "pay_period_start_date": "2026-06-01", "payment_method": "Bank Transfer",
             "overtime_hourly_rate": 350, "late_deduction_rate": 0,
-            "benefits": [{"name": "Pick and Drop Service", "amount": 0}, {"name": "Expenses", "amount": 0}],
+            "benefits": [{"name": "Pick and Drop Service","calculation_type": "fixed", "value": 0}, {"name": "Expenses","calculation_type": "fixed", "value": 0}],
             "deductions": [{"type": "UIF", "calculation_type": "fixed", "value": 500}, {"type": "Income Tax", "calculation_type": "fixed", "value": 0}]
         }
     },
@@ -105,7 +105,7 @@ DUMMY_EMPLOYEES = [
             "salary_type": "Monthly", "base_salary": 38000, "hourly_rate": None, "currency": "PKR",
             "pay_period_start_date": "2026-06-01", "payment_method": "Bank Transfer",
             "overtime_hourly_rate": 220, "late_deduction_rate": 100,
-            "benefits": [{"name": "Pick and Drop Service", "amount": 0}, {"name": "Expenses", "amount": 400}],
+            "benefits": [{"name": "Pick and Drop Service","calculation_type": "fixed", "value": 0}, {"name": "Expenses","calculation_type": "fixed", "value": 400}],
             "deductions": [{"type": "UIF", "calculation_type": "percentage", "value": 5}, {"type": "Income Tax", "calculation_type": "percentage", "value": 6}]
         }
     },
@@ -121,7 +121,7 @@ DUMMY_EMPLOYEES = [
             "salary_type": "Hourly", "base_salary": None, "hourly_rate": 180, "currency": "PKR",
             "pay_period_start_date": "2026-06-01", "payment_method": "Bank Transfer",
             "overtime_hourly_rate": 250, "late_deduction_rate": 60,
-            "benefits": [{"name": "Pick and Drop Service", "amount": 0}, {"name": "Expenses", "amount": 0}],
+            "benefits": [{"name": "Pick and Drop Service", "calculation_type": "fixed", "value": 0}, {"name": "Expenses","calculation_type": "fixed", "value": 0}],
             "deductions": [{"type": "UIF", "calculation_type": "fixed", "value": 300}, {"type": "Income Tax", "calculation_type": "fixed", "value": 0}]
         }
     },
@@ -137,7 +137,7 @@ DUMMY_EMPLOYEES = [
             "salary_type": "Monthly", "base_salary": 30000, "hourly_rate": None, "currency": "PKR",
             "pay_period_start_date": "2026-06-01", "payment_method": "Bank Transfer",
             "overtime_hourly_rate": 200, "late_deduction_rate": 90,
-            "benefits": [{"name": "Pick and Drop Service", "amount": 500}, {"name": "Expenses", "amount": 0}],
+            "benefits": [{"name": "Pick and Drop Service","calculation_type": "fixed", "value": 500}, {"name": "Expenses", "calculation_type": "fixed", "value": 0}],
             "deductions": [{"type": "UIF", "calculation_type": "percentage", "value": 5}, {"type": "Income Tax", "calculation_type": "fixed", "value": 1200}]
         }
     },
@@ -153,7 +153,7 @@ DUMMY_EMPLOYEES = [
             "salary_type": "Monthly", "base_salary": 18000, "hourly_rate": None, "currency": "PKR",
             "pay_period_start_date": "2026-06-01", "payment_method": "Bank Transfer",
             "overtime_hourly_rate": 280, "late_deduction_rate": 130,
-            "benefits": [{"name": "Pick and Drop Service", "amount": 0}, {"name": "Expenses", "amount": 600}],
+            "benefits": [{"name": "Pick and Drop Service", "calculation_type": "fixed", "value": 0}, {"name": "Expenses","calculation_type": "fixed", "value": 600}],
             "deductions": [{"type": "UIF", "calculation_type": "percentage", "value": 5}, {"type": "Income Tax", "calculation_type": "percentage", "value": 9}]
         }
     },
