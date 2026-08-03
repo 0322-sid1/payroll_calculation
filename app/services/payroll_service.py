@@ -1,14 +1,13 @@
 from uuid import uuid4
-from app.data.dummy_employees import DUMMY_EMPLOYEES
 from app.models.payroll_schema import EmployeePayroll, AttendanceSummary, SalaryComponent
 from app.services.attendance_service import calculate_attendance_summary
-from app.data.attendance_generator import generate_working_dates, generate_attendance_log
+from app.repositories import attendance_repository
+from app.repositories import employee_repository as emp_repo
 
-#return employees on the basis of id if no id then return all employees
-def get_employees_by_ids(employee_ids: list[str]) -> list[dict]:
-    if not employee_ids:
-        return DUMMY_EMPLOYEES
-    return [e for e in DUMMY_EMPLOYEES if e["employee_id"] in employee_ids]
+
+#return employees on the basis of id
+async def get_employees_by_ids(employee_ids: list[str]) -> list[dict]:
+    return await emp_repo.get_employees_by_ids(employee_ids)
 
 #Benefit ya deduction ki actual amount calculate krta hai 
 def calculate_component_amount(item: dict, base_salary: float) -> float:
@@ -19,20 +18,14 @@ def calculate_component_amount(item: dict, base_salary: float) -> float:
     return item["value"]
 
 #compute employee payroll by taaking time_config from dummy data and attendance profile
-def compute_employee_payroll(emp: dict, pay_period) -> EmployeePayroll:  
+async def compute_employee_payroll(emp: dict, pay_period) -> EmployeePayroll:
     time_config = emp["time_config"]
-    profile = emp["attendance_profile"]
-#here we call generate wotking dates, attendance log function and attendance summary which we define in attendance generator file
-    dates = generate_working_dates(
-        str(pay_period.start_date), str(pay_period.end_date), time_config["working_days_per_week"]
+
+    attendance_records = await attendance_repository.get_attendance_records(
+    emp["_id"], str(pay_period.start_date), str(pay_period.end_date)
     )
-    log = generate_attendance_log(
-        seed=profile["seed"], dates=dates,
-        standard_clock_in=time_config["standard_clock_in"],
-        standard_clock_out=time_config["standard_clock_out"],
-        absent_days=profile["absent_days"], late_days=profile["late_days"], overtime_days=profile["overtime_days"],
-    )
-    attendance = calculate_attendance_summary(log, time_config)
+    attendance = calculate_attendance_summary(attendance_records, time_config)
+
     salary = emp["salary"]
     time_config = emp["time_config"]
 
@@ -77,7 +70,7 @@ def compute_employee_payroll(emp: dict, pay_period) -> EmployeePayroll:
     net_salary = round(total_earnings - total_deductions, 2)
 
     return EmployeePayroll(
-        employee_id=emp["employee_id"],
+        employee_id=emp["_id"],
         name=emp["name"],
         email=emp["email"],
         profile_picture=emp["profile_picture"],

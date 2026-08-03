@@ -5,5 +5,13 @@ pydantic
 cloudinary
 python-multipart
 python-dotenv
+pydantic[email]
 
 # uvicorn main:app --reload
+
+
+# time_config → {"working_days_per_week":5,"standard_clock_in":"09:00","standard_clock_out":"17:00","paid_leaves_allowed_per_month":2}
+
+# salary → {"salary_type":"Monthly","base_salary":25000,"hourly_rate":null,"currency":"PKR","pay_period_start_date":"2026-06-01","payment_method":"Bank Transfer","overtime_hourly_rate":200,"late_deduction_rate":100,"benefits":[{"name":"Expenses","calculation_type":"fixed","value":500}],"deductions":[{"type":"UIF","calculation_type":"percentage","value":5}]}
+
+# attendance_profile → {"seed":1,"absent_days":2,"late_days":1,"overtime_days":1}

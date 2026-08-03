@@ -6,9 +6,13 @@ router = APIRouter(prefix="/api/payroll", tags=["Payroll"])
 
 #this api generate payroll of employees
 @router.post("/generate", response_model=GeneratePayrollResponse)
-def generate_payroll(request: GeneratePayrollRequest):
-    employees = get_employees_by_ids(request.employee_ids)
-    payroll_employees = [compute_employee_payroll(emp, request.pay_period) for emp in employees]
+async def generate_payroll(request: GeneratePayrollRequest):
+    employees = await get_employees_by_ids(request.employee_ids)
+
+    payroll_employees = []
+    for emp in employees:
+        employee_payroll = await compute_employee_payroll(emp, request.pay_period)
+        payroll_employees.append(employee_payroll)
 
     return GeneratePayrollResponse(
         payroll_id=generate_payroll_id(str(request.pay_period.start_date)),

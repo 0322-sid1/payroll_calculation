@@ -17,6 +17,13 @@ class BusinessSize(str, Enum):
     SIZE_51_200 = "51 - 200 employees"
     SIZE_201_500 = "201 - 500 employees"
     SIZE_500_PLUS = "500+ employees"
+    
+class Currency(str, Enum):
+    USD = "USD"
+    PKR = "PKR"
+    EUR = "EUR"
+    GBP = "GBP"
+    AED = "AED"    
 
 
 class SocialLink(BaseModel):
