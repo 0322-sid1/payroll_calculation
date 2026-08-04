@@ -1,39 +1,32 @@
 from uuid import uuid4
-from app.models.payroll_schema import EmployeePayroll, AttendanceSummary, SalaryComponent
-from app.services.attendance_service import calculate_attendance_summary
-from app.repositories import attendance_repository
+from app.models.payroll_schema import EmployeePayroll, AttendanceSummary, SalaryComponent, GeneratePayrollResponse
+from app.controllers import attendance_controller
 from app.repositories import employee_repository as emp_repo
 
 
-#return employees on the basis of id
 async def get_employees_by_ids(employee_ids: list[str]) -> list[dict]:
     return await emp_repo.get_employees_by_ids(employee_ids)
 
-#Benefit ya deduction ki actual amount calculate krta hai 
+
 def calculate_component_amount(item: dict, base_salary: float) -> float:
-    #if calculation type is percentage then multiply base salary with percent and then divide by 100 at the end round off complete value by 2 decimal places
-    #otherwise return value
     if item["calculation_type"] == "percentage":
         return round((base_salary or 0) * (item["value"] / 100), 2)
     return item["value"]
 
-#compute employee payroll by taaking time_config from dummy data and attendance profile
+
 async def compute_employee_payroll(emp: dict, pay_period) -> EmployeePayroll:
     time_config = emp["time_config"]
-
-    attendance_records = await attendance_repository.get_attendance_records(
-    emp["_id"], str(pay_period.start_date), str(pay_period.end_date)
-    )
-    attendance = calculate_attendance_summary(attendance_records, time_config)
-
     salary = emp["salary"]
-    time_config = emp["time_config"]
+
+    attendance = await attendance_controller.get_attendance_summary(
+        emp["_id"], str(pay_period.start_date), str(pay_period.end_date), time_config
+    )
 
     overtime_pay = round(attendance["overtime_hours"] * salary["overtime_hourly_rate"], 2)
     late_deduction = round(attendance["late_arrival_hours"] * salary["late_deduction_rate"], 2)
-#here we make an empty list in which every salary component like base salary,overtime,deductions benefits etc should be added
+
     components: list[SalaryComponent] = []
-#if employee is hourly then his salary calculate accordingly if monthly then run else block
+
     if emp["employee_type"] == "Hourly":
         basic_amount = round(attendance["present_days"] * emp["working_hours_per_day"] * salary["hourly_rate"], 2)
         components.append(SalaryComponent(component="Basic Salary (Hourly)", type="Earnings", amount=basic_amount))
@@ -53,17 +46,16 @@ async def compute_employee_payroll(emp: dict, pay_period) -> EmployeePayroll:
         components.append(SalaryComponent(component="Overtime Pay", type="Earnings", amount=overtime_pay))
     if late_deduction > 0:
         components.append(SalaryComponent(component="Late Arrivals", type="Deduction", amount=late_deduction))
-    
+
     for benefit in salary["benefits"]:
         amount = calculate_component_amount(benefit, base_for_deductions)
         if amount > 0:
             components.append(SalaryComponent(component=benefit["name"], type="Earnings", amount=amount))
-    
+
     for deduction in salary["deductions"]:
         amount = calculate_component_amount(deduction, base_for_deductions)
         if amount > 0:
             components.append(SalaryComponent(component=deduction["type"], type="Deduction", amount=amount))
-  #here we calculate total earnings total deductions and then net salary 
 
     total_earnings = sum(c.amount for c in components if c.type == "Earnings")
     total_deductions = sum(c.amount for c in components if c.type == "Deduction")
@@ -83,6 +75,23 @@ async def compute_employee_payroll(emp: dict, pay_period) -> EmployeePayroll:
         net_salary=net_salary,
     )
 
-#generate 6 digit uppercase unique random payroll_id for each employee take first 7 characters of pay period start date that include year and month
+
 def generate_payroll_id(pay_period_start: str) -> str:
     return f"PR-{pay_period_start[:7]}-{uuid4().hex[:6].upper()}"
+
+
+async def generate_payroll(request) -> GeneratePayrollResponse:
+    employees = await get_employees_by_ids(request.employee_ids)
+
+    payroll_employees = []
+    for emp in employees:
+        employee_payroll = await compute_employee_payroll(emp, request.pay_period)
+        payroll_employees.append(employee_payroll)
+
+    return GeneratePayrollResponse(
+        payroll_id=generate_payroll_id(str(request.pay_period.start_date)),
+        payroll_type=request.payroll_type,
+        employee_type=request.employee_type,
+        pay_period=request.pay_period,
+        employees=payroll_employees,
+    )

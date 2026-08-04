@@ -10,6 +10,7 @@ class AttendanceStatus(str, Enum):
 
 class AttendanceRecordCreate(BaseModel):
     employee_id: str
+    company_id: str
     date: str                       
     status: AttendanceStatus
     clock_in: Optional[str] = None  

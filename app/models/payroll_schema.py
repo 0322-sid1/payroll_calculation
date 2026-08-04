@@ -1,6 +1,7 @@
 from pydantic import BaseModel
-from typing import List, Literal
+from typing import List, Literal, Optional
 from datetime import date
+
 
 class PayPeriod(BaseModel):
     start_date: date
@@ -28,7 +29,7 @@ class EmployeePayroll(BaseModel):
     employee_id: str
     name: str
     email: str
-    profile_picture: str
+    profile_picture: Optional[str] = None 
     department: str
     designation: str
     employment_type: str

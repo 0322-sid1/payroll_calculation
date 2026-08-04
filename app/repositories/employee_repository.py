@@ -1,18 +1,18 @@
-from app.database import employee_collection
+from app.config.database import employee_collection
 from bson import ObjectId
 
-
+#this function converts the objectid to string bcz fastapi cannot directly return objectid
 def _serialize(doc: dict) -> dict:
     doc["_id"] = str(doc["_id"])
     return doc
 
-
+#this function creates employee in database and returns the created employee document
 async def create_employee(data: dict) -> dict:
     result = await employee_collection.insert_one(data)
     doc = await employee_collection.find_one({"_id": result.inserted_id})
     return _serialize(doc)
 
-
+#
 async def get_employees_by_ids(employee_ids: list[str]) -> list[dict]:
     if not employee_ids:
         docs = await employee_collection.find().to_list(length=None)
@@ -39,10 +39,10 @@ async def delete_employee(employee_id: str) -> bool:
     return result.deleted_count > 0
 
 
-async def get_all_employees(company_id: str | None = None) -> list[dict]:
-    query = {"company_id": company_id} if company_id else {}
-    docs = await employee_collection.find(query).to_list(length=None)
-    return [_serialize(d) for d in docs]
+# async def get_all_employees(company_id: str | None = None) -> list[dict]:
+#     query = {"company_id": company_id} if company_id else {}
+#     docs = await employee_collection.find(query).to_list(length=None)
+#     return [_serialize(d) for d in docs]
 
 
 

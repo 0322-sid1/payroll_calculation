@@ -1,5 +1,5 @@
 from bson import ObjectId
-from app.database import company_collection
+from app.config.database import company_collection
 
 #this function converts the objectid to string bcz fastapi cannot directly return objectid
 def _serialize(doc: dict) -> dict:
