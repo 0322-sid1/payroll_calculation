@@ -1,7 +1,7 @@
-from uuid import uuid4
 from app.models.payroll_schema import EmployeePayroll, AttendanceSummary, SalaryComponent, GeneratePayrollResponse
 from app.controllers import attendance_controller
 from app.repositories import employee_repository as emp_repo
+from app.repositories import payroll_repository
 
 
 async def get_employees_by_ids(employee_ids: list[str]) -> list[dict]:
@@ -76,10 +76,6 @@ async def compute_employee_payroll(emp: dict, pay_period) -> EmployeePayroll:
     )
 
 
-def generate_payroll_id(pay_period_start: str) -> str:
-    return f"PR-{pay_period_start[:7]}-{uuid4().hex[:6].upper()}"
-
-
 async def generate_payroll(request) -> GeneratePayrollResponse:
     employees = await get_employees_by_ids(request.employee_ids)
 
@@ -88,10 +84,19 @@ async def generate_payroll(request) -> GeneratePayrollResponse:
         employee_payroll = await compute_employee_payroll(emp, request.pay_period)
         payroll_employees.append(employee_payroll)
 
+    payroll_data = {
+        "payroll_type": request.payroll_type,
+        "employee_type": request.employee_type,
+        "pay_period": request.pay_period.model_dump(mode="json"),
+        "employees": [emp.model_dump(mode="json") for emp in payroll_employees],
+    }
+
+    saved = await payroll_repository.save_payroll(payroll_data)
+
     return GeneratePayrollResponse(
-        payroll_id=generate_payroll_id(str(request.pay_period.start_date)),
-        payroll_type=request.payroll_type,
-        employee_type=request.employee_type,
+        payroll_id=saved["_id"],   
+        payroll_type=saved["payroll_type"],
+        employee_type=saved["employee_type"],
         pay_period=request.pay_period,
         employees=payroll_employees,
     )

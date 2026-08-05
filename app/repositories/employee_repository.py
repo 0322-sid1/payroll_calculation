@@ -39,12 +39,6 @@ async def delete_employee(employee_id: str) -> bool:
     return result.deleted_count > 0
 
 
-# async def get_all_employees(company_id: str | None = None) -> list[dict]:
-#     query = {"company_id": company_id} if company_id else {}
-#     docs = await employee_collection.find(query).to_list(length=None)
-#     return [_serialize(d) for d in docs]
-
-
 
 async def query_employees(filters: dict) -> list[dict]:
     docs = await employee_collection.find(filters).to_list(length=None)
