@@ -2,6 +2,7 @@ from app.models.payroll_schema import EmployeePayroll, AttendanceSummary, Salary
 from app.controllers import attendance_controller
 from app.repositories import employee_repository as emp_repo
 from app.repositories import payroll_repository
+from fastapi import HTTPException
 
 
 async def get_employees_by_ids(employee_ids: list[str]) -> list[dict]:
@@ -76,7 +77,20 @@ async def compute_employee_payroll(emp: dict, pay_period) -> EmployeePayroll:
     )
 
 
-async def generate_payroll(request) -> GeneratePayrollResponse:
+async def generate_payroll(request, current_user: dict) -> GeneratePayrollResponse:
+    company_id = current_user.get("company_id")
+    if company_id is None:
+        raise HTTPException(400, "You don't have a company yet. Please create a company first.")
+
+    month = str(request.pay_period.start_date)[:7]
+
+    existing_payroll = await payroll_repository.get_payroll_by_company_and_month(company_id, month)
+    if existing_payroll is not None:
+        raise HTTPException(
+            409,
+            "Payroll for this month already exists. Please delete it first if you want to regenerate."
+        )
+
     employees = await get_employees_by_ids(request.employee_ids)
 
     payroll_employees = []
@@ -85,18 +99,35 @@ async def generate_payroll(request) -> GeneratePayrollResponse:
         payroll_employees.append(employee_payroll)
 
     payroll_data = {
-        "payroll_type": request.payroll_type,
-        "employee_type": request.employee_type,
-        "pay_period": request.pay_period.model_dump(mode="json"),
-        "employees": [emp.model_dump(mode="json") for emp in payroll_employees],
-    }
+    "company_id": company_id,
+    "month": month,
+    "payroll_type": request.payroll_type,
+    "employee_type": request.employee_type,
+    "pay_period": {
+        "start_date": str(request.pay_period.start_date),
+        "end_date": str(request.pay_period.end_date),
+    },
+    "employees": [emp.model_dump() for emp in payroll_employees],
+}
 
     saved = await payroll_repository.save_payroll(payroll_data)
 
     return GeneratePayrollResponse(
-        payroll_id=saved["_id"],   
+        payroll_id=saved["_id"],
         payroll_type=saved["payroll_type"],
         employee_type=saved["employee_type"],
         pay_period=request.pay_period,
         employees=payroll_employees,
     )
+
+
+async def delete_payroll(payroll_id: str, current_user: dict) -> bool:
+    existing_payroll = await payroll_repository.get_payroll_by_id(payroll_id)
+    if existing_payroll is None:
+        return False
+
+    if existing_payroll["company_id"] != current_user.get("company_id"):
+        raise HTTPException(403, "You are not allowed to delete this payroll")
+
+    return await payroll_repository.delete_payroll(payroll_id)
+

@@ -6,6 +6,12 @@ cloudinary
 python-multipart
 python-dotenv
 pydantic[email]
+fastapi-mail
+bcrypt
+pyjwt
+python-dotenv
+
+
 
 # uvicorn main:app --reload
 

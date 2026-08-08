@@ -27,6 +27,10 @@ async def get_employees_by_ids(employee_ids: list[str]) -> list[dict]:
         employees.append(_serialize(doc))
     return employees
 
+async def get_all_employees(company_id: str | None = None) -> list[dict]:
+    query = {"company_id": company_id} if company_id else {}
+    docs = await employee_collection.find(query).to_list(length=None)
+    return [_serialize(d) for d in docs]
 
 async def update_employee(employee_id: str, data: dict) -> dict | None:
     await employee_collection.update_one({"_id": ObjectId(employee_id)}, {"$set": data})

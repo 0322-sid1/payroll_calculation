@@ -2,7 +2,7 @@ import json
 from typing import Optional
 from fastapi import HTTPException, UploadFile
 import cloudinary.uploader
-from app.config import cloudinary_config   # <-- config/ move ke baad
+from app.config import cloudinary_config  
 from app.repositories import employee_repository as repo
 
 
@@ -40,9 +40,9 @@ async def create_employee(
     return await repo.create_employee(data)
 
 
-# async def get_employee_by_id(employee_id: str) -> dict | None:
-#     employees = await repo.get_employees_by_ids([employee_id])
-#     return employees[0] if employees else None
+async def get_employee_by_id(employee_id: str) -> dict | None:
+    employees = await repo.get_employees_by_ids([employee_id])
+    return employees[0] if employees else None
 
 
 async def get_employees_by_ids(employee_ids: list[str]) -> list[dict]:
